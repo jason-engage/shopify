@@ -11,3 +11,7 @@ Simple [Shopify API](http://api.shopify.com/) client in PHP
 ## Usage and Quickstart Skeleton Project
 
 See [phpish/shopify_app-skeleton](https://github.com/phpish/shopify_app-skeleton) and [phpish/shopify_private_app-skeleton](https://github.com/phpish/shopify_private_app-skeleton)
+
+## FIXED
+
+I had to fix it so it works with the latest HMAC protocols. Unable to reach creator for pull request.
