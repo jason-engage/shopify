@@ -41,7 +41,19 @@
 		{
 			if (!$private_app) $request_headers['X-Shopify-Access-Token'] = $oauth_token;
 			$request_headers['content-type'] = 'application/json; charset=utf-8';
-			$http_client = http\client($base_uri, $request_headers);
+			$http_client = http\client($base_uri, $request_headers, array(
+				CURLOPT_HEADER => true,
+				CURLOPT_RETURNTRANSFER => true,
+				# http://www.php.net/manual/en/function.curl-setopt.php#71313
+				# CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS => 3,
+				CURLOPT_SSL_VERIFYPEER => true,
+				CURLOPT_SSL_VERIFYHOST => 2,
+				CURLOPT_USERAGENT => 'phpish/http',
+				CURLOPT_CONNECTTIMEOUT => 500,
+				CURLOPT_TIMEOUT => 500,
+				CURLOPT_SSLVERSION => 1
+			));
 			try
 			{
 				$response = $http_client($method_uri, $query, $payload, $response_headers, $request_headers, $curl_opts);
@@ -60,10 +72,10 @@
 			return (is_array($response) and !empty($response)) ? array_shift($response) : $response;
 		};
 	}
-		function _private_app_base_url($shop, $api_key, $password)
-		{
-			return "https://$api_key:$password@$shop/";
-		}
+	function _private_app_base_url($shop, $api_key, $password)
+	{
+		return "https://$api_key:$password@$shop/";
+	}
 	function calls_made($response_headers)
 	{
 		return _shop_api_call_limit_param(0, $response_headers);
@@ -72,15 +84,15 @@
 	{
 		return _shop_api_call_limit_param(1, $response_headers);
 	}
-	function calls_left($response_headers)
+    function calls_left($response_headers)
 	{
 		return call_limit($response_headers) - calls_made($response_headers);
 	}
-		function _shop_api_call_limit_param($index, $response_headers)
-		{
-			$params = explode('/', $response_headers['http_x_shopify_shop_api_call_limit']);
-			return (int) $params[$index];
-		}
+	function _shop_api_call_limit_param($index, $response_headers)
+	{
+		$params = explode('/', $response_headers['http_x_shopify_shop_api_call_limit']);
+		return (int) $params[$index];
+	}
 	class Exception extends http\Exception { }
 	class CurlException extends Exception { }
 	class ApiException extends Exception
