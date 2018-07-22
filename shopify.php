@@ -60,6 +60,7 @@
 			}
 			catch (http\CurlException $e) { throw new CurlException($e->getMessage(), $e->getCode(), $e->getRequest()); }
 			catch (http\ResponseException $e) { throw new ApiException($e->getMessage(), $e->getCode(), $e->getRequest(), $e->getResponse()); }
+			catch (http\Exception $e) { throw new Exception($e->getMessage(), $e->getCode(), $e->getRequest()); }
 			if (isset($response['errors']))
 			{
 				list($method, $uri) = explode(' ', $method_uri, 2);
@@ -84,7 +85,7 @@
 	{
 		return _shop_api_call_limit_param(1, $response_headers);
 	}
-    function calls_left($response_headers)
+    	function calls_left($response_headers)
 	{
 		return call_limit($response_headers) - calls_made($response_headers);
 	}
